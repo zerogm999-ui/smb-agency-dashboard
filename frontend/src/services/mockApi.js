@@ -1,0 +1,195 @@
+const DEMO_AGENCY_ID = 'demo-agency';
+
+const demoUser = {
+  id: 'demo-user',
+  email: 'demo@agency.com',
+  name: 'Demo Admin',
+  role: 'admin',
+};
+
+const demoAgency = {
+  id: DEMO_AGENCY_ID,
+  name: 'Acme Marketing',
+  email: 'demo@agency.com',
+};
+
+const integrations = [
+  { id: 'int-google', platform: 'google-ads', status: 'connected', lastSyncAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString() },
+  { id: 'int-meta', platform: 'meta-ads', status: 'connected', lastSyncAt: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString() },
+  { id: 'int-stripe', platform: 'stripe', status: 'connected', lastSyncAt: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString() },
+];
+
+const campaigns = [
+  { id: 'camp-1', name: 'Search - Brand Terms', platform: 'google-ads', spend: 4280, revenue: 18420, conversions: 248, roas: 4.3, status: 'active' },
+  { id: 'camp-2', name: 'Summer Retargeting', platform: 'meta-ads', spend: 3610, revenue: 12980, conversions: 174, roas: 3.6, status: 'active' },
+  { id: 'camp-3', name: 'Lookalike 1% - US', platform: 'meta-ads', spend: 2920, revenue: 11240, conversions: 139, roas: 3.8, status: 'active' },
+  { id: 'camp-4', name: 'Shopping - Electronics', platform: 'google-ads', spend: 5110, revenue: 21880, conversions: 286, roas: 4.28, status: 'active' },
+  { id: 'camp-5', name: 'Display Network - Cold', platform: 'google-ads', spend: 1870, revenue: 3840, conversions: 72, roas: 2.05, status: 'active' },
+];
+
+const funnel = [
+  { key: 'new', label: 'New Leads', count: 420, value: 0, color: '#5E6AD2' },
+  { key: 'mql', label: 'MQL', count: 260, value: 0, color: '#7C3AED' },
+  { key: 'sql', label: 'SQL', count: 158, value: 0, color: '#8B5CF6' },
+  { key: 'deal', label: 'Deals', count: 74, value: 128000, color: '#10B981' },
+  { key: 'closed_won', label: 'Closed Won', count: 31, value: 68400, color: '#059669' },
+];
+
+const leads = Array.from({ length: 12 }, (_, index) => {
+  const names = [
+    ['Maya', 'Shah', 'Northstar Labs'],
+    ['Ethan', 'Cole', 'CloudScale'],
+    ['Ava', 'Patel', 'BrightCart'],
+    ['Noah', 'Reed', 'Mainstream Co'],
+    ['Lina', 'Garcia', 'Starlight Inc'],
+    ['Owen', 'Kim', 'NextGen Solutions'],
+  ];
+  const [first, last, company] = names[index % names.length];
+  const statuses = ['new', 'mql', 'sql', 'deal', 'closed_won', 'closed_lost'];
+
+  return {
+    id: `lead-${index + 1}`,
+    first_name: first,
+    last_name: last,
+    email: `${first.toLowerCase()}.${last.toLowerCase()}@example.com`,
+    company,
+    status: statuses[index % statuses.length],
+    value: index % 3 === 0 ? 4500 + index * 300 : 0,
+    campaign_name: campaigns[index % campaigns.length].name,
+    created_at: new Date(Date.now() - index * 24 * 60 * 60 * 1000).toISOString(),
+  };
+});
+
+const makeTrends = (days = 30) => {
+  return Array.from({ length: Number(days) || 30 }, (_, index) => {
+    const date = new Date();
+    date.setDate(date.getDate() - ((Number(days) || 30) - index - 1));
+    const lift = 1 + index / 80;
+    return {
+      date: date.toISOString().slice(0, 10),
+      spend: Math.round((420 + Math.sin(index / 2) * 80 + index * 7) * lift),
+      revenue: Math.round((1300 + Math.cos(index / 3) * 220 + index * 18) * lift),
+      conversions: Math.round(22 + Math.sin(index / 3) * 4 + index / 3),
+    };
+  });
+};
+
+const getReports = () => JSON.parse(localStorage.getItem('demoReports') || '[]');
+const setReports = (reports) => localStorage.setItem('demoReports', JSON.stringify(reports));
+
+const response = (data) => Promise.resolve({ data, status: 200, statusText: 'OK', headers: {}, config: {} });
+
+export const isDemoLogin = (url, data) => {
+  return url === '/auth/login' && data?.email === 'demo@agency.com' && data?.password === 'password123';
+};
+
+export const mockApi = {
+  get(url, config = {}) {
+    const days = new URLSearchParams(url.split('?')[1] || '').get('days') || 30;
+
+    if (url.includes('/dashboard/') && url.includes('/overview')) {
+      return response({
+        overview: {
+          totalSpend: 17790,
+          totalRevenue: 68360,
+          totalConversions: 919,
+          roas: 3.84,
+          monthlyBudget: 25000,
+        },
+        changes: {
+          spendChange: -6.4,
+          revenueChange: 18.2,
+          conversionsChange: 12.7,
+        },
+      });
+    }
+
+    if (url.includes('/dashboard/') && url.includes('/campaigns')) {
+      return response({ campaigns });
+    }
+
+    if (url.includes('/dashboard/') && url.includes('/trends')) {
+      return response({ trends: makeTrends(days) });
+    }
+
+    if (url.includes('/integrations/')) {
+      return response({ integrations });
+    }
+
+    if (url.includes('/crm/') && url.includes('/funnel')) {
+      return response({ funnel });
+    }
+
+    if (url.includes('/crm/') && url.includes('/leads')) {
+      return response({ leads });
+    }
+
+    if (url.includes('/reports/') && url.includes('/download')) {
+      return response(new Blob(['Demo report generated by SMB Agency Dashboard.'], { type: 'application/pdf' }));
+    }
+
+    if (url.includes('/reports/')) {
+      return response({ reports: getReports() });
+    }
+
+    return response({});
+  },
+
+  post(url, data = {}) {
+    if (isDemoLogin(url, data)) {
+      return response({
+        message: 'Demo login successful',
+        user: demoUser,
+        agency: demoAgency,
+        token: 'demo-token',
+        expiresIn: '7d',
+      });
+    }
+
+    if (url === '/auth/register') {
+      return response({
+        message: 'Demo registration successful',
+        user: { ...demoUser, email: data.email || demoUser.email, name: data.email || demoUser.name },
+        agency: { ...demoAgency, name: data.agencyName || demoAgency.name, email: data.email || demoAgency.email },
+        token: 'demo-token',
+        expiresIn: '7d',
+      });
+    }
+
+    if (url.includes('/reports/') && url.includes('/generate')) {
+      const reports = getReports();
+      const report = {
+        id: `report-${Date.now()}`,
+        title: data.title || 'Performance Report',
+        status: 'completed',
+        createdAt: new Date().toISOString(),
+        fileSize: 42800,
+      };
+      setReports([report, ...reports]);
+      return response({ report });
+    }
+
+    if (url.includes('/authorize')) {
+      return response({ connected: true });
+    }
+
+    if (url.includes('/sync/')) {
+      return response({ status: 'success' });
+    }
+
+    return response({});
+  },
+
+  patch() {
+    return response({ status: 'updated' });
+  },
+
+  delete(url) {
+    if (url.includes('/reports/')) {
+      const reportId = url.split('/').pop();
+      setReports(getReports().filter((report) => report.id !== reportId));
+    }
+
+    return response({ status: 'deleted' });
+  },
+};
