@@ -127,11 +127,11 @@ async function startServer() {
     await initializeDatabase();
     console.log('✅ Database initialized successfully');
 
-    app.listen(PORT, () => {
+    app.listen(PORT, '0.0.0.0', () => {
       console.log(`\n🚀 SMB Dashboard API running on port ${PORT}`);
       console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
-      console.log(`🔗 Health check: http://localhost:${PORT}/health`);
-      console.log(`📚 API base URL: http://localhost:${PORT}/api\n`);
+      console.log(`🔗 Health check: /health`);
+      console.log(`📚 API base URL: /api\n`);
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error.message);
