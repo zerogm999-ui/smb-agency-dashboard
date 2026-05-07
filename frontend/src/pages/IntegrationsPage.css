@@ -1,0 +1,73 @@
+.integrations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.integration-card {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  transition: transform var(--transition-normal);
+}
+
+.integration-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.integration-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.integration-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background-color: var(--bg-surface-hover);
+}
+
+.integration-logo.google-ads { background: linear-gradient(135deg, #4285F4, #34A853, #FBBC05, #EA4335); }
+.integration-logo.meta-ads { background: linear-gradient(135deg, #1877F2, #00C6FF); }
+.integration-logo.stripe { background: linear-gradient(135deg, #635BFF, #00D4FF); }
+.integration-logo.hubspot { background: linear-gradient(135deg, #FF7A59, #FF8F71); }
+
+.integration-body {
+  flex: 1;
+  margin-bottom: 1.5rem;
+}
+
+.integration-body h3 {
+  font-size: 1.1rem;
+  margin: 0 0 0.5rem 0;
+}
+
+.integration-body p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.integration-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: var(--radius-sm);
+  color: var(--error);
+  font-size: 0.8rem;
+}
+
+.integration-error span {
+  flex: 1;
+}
+
+.integration-footer {
+  margin-top: auto;
+}

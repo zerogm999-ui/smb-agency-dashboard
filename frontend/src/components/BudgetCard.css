@@ -1,0 +1,107 @@
+.budget-card {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.budget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.budget-title h3 {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.budget-status {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+}
+
+.budget-status.on-track { background: rgba(16, 185, 129, 0.1); color: #34D399; }
+.budget-status.overpacing { background: rgba(239, 68, 68, 0.1); color: #F87171; }
+.budget-status.underpacing { background: rgba(59, 130, 246, 0.1); color: #60A5FA; }
+
+.budget-amount {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.budget-progress-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.budget-progress-bar {
+  height: 8px;
+  background-color: var(--bg-base);
+  border-radius: 4px;
+  position: relative;
+  overflow: visible;
+}
+
+.budget-progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 1s ease-out;
+}
+
+.budget-progress-fill.on-track { background-color: var(--success); }
+.budget-progress-fill.overpacing { background-color: var(--error); }
+.budget-progress-fill.underpacing { background-color: var(--info); }
+
+.budget-progress-marker {
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  width: 2px;
+  background-color: var(--text-primary);
+  z-index: 1;
+}
+
+.budget-progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.budget-footer {
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.projection-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+}
+
+.projection-item .label {
+  color: var(--text-muted);
+}
+
+.projection-item .value {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.projection-item .value.warning {
+  color: var(--error);
+}
