@@ -23,11 +23,24 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 
 // ---------------------
+// Health Check (Top level to bypass all middleware)
+// ---------------------
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
+});
+
+console.log('--- SERVER STARTING ---');
+console.log('PORT:', PORT);
+console.log('NODE_ENV:', process.env.NODE_ENV);
+
+// ---------------------
 // Middleware
 // ---------------------
 
-// Security headers
-app.use(helmet());
+// Security headers (Only basic for now to avoid blocking)
+app.use(helmet({
+  contentSecurityPolicy: false, // Disable for now to ensure visibility
+}));
 
 // CORS configuration
 const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:3000').split(',');
