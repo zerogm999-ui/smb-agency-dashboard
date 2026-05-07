@@ -88,6 +88,23 @@ app.get('/health', (req, res) => {
 // ---------------------
 // API Routes
 // ---------------------
+app.get('/api', (req, res) => {
+  res.json({
+    name: 'SMB Agency Dashboard API',
+    status: 'ok',
+    version: '1.0.0',
+    endpoints: {
+      health: '/health',
+      auth: '/api/auth',
+      dashboard: '/api/dashboard',
+      integrations: '/api/integrations',
+      sync: '/api/sync',
+      reports: '/api/reports',
+      crm: '/api/crm',
+    },
+  });
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/integrations', integrationsRoutes);
 app.use('/api/sync', syncRoutes);
