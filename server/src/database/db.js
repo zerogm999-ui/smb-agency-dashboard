@@ -1,22 +1,25 @@
 // PostgreSQL Database Setup & Schema
 const pgp = require('pg-promise')();
 
-// Connection configuration
-const connectionConfig = {
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT) || 5432,
-  database: process.env.DB_NAME || 'smb_dashboard',
-  user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || 'postgres',
-  max: 20,           // Max pool size
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 5000,
-};
+// Database configuration
+const isProduction = process.env.NODE_ENV === 'production';
 
-// Use DATABASE_URL if provided (for production/Docker)
-const db = process.env.DATABASE_URL
-  ? pgp({ connectionString: process.env.DATABASE_URL, ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false })
-  : pgp(connectionConfig);
+const dbConfig = process.env.DATABASE_URL 
+  ? {
+      connectionString: process.env.DATABASE_URL,
+      ssl: isProduction ? { rejectUnauthorized: false } : false
+    }
+  : {
+      host: process.env.DB_HOST || 'localhost',
+      port: parseInt(process.env.DB_PORT) || 5432,
+      database: process.env.DB_NAME || 'smb_dashboard',
+      user: process.env.DB_USER || 'postgres',
+      password: process.env.DB_PASSWORD || 'postgres',
+      max: parseInt(process.env.DB_POOL_MAX) || 20,
+      idleTimeoutMillis: 30000,
+    };
+
+const db = pgp(dbConfig);
 
 // ---------------------
 // Schema Definition
