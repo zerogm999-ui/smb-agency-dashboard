@@ -162,6 +162,24 @@ async function startServer() {
   }
 }
 
+// ---------------------
+// Global Process Handlers
+// ---------------------
+process.on('uncaughtException', (err) => {
+  console.error('🔥 UNCAUGHT EXCEPTION! Shutting down...');
+  console.error(err.name, err.message);
+  console.error(err.stack);
+  // Optional: Graceful shutdown
+  // process.exit(1);
+});
+
+process.on('unhandledRejection', (err) => {
+  console.error('💥 UNHANDLED REJECTION! Shutting down...');
+  console.error(err.name, err.message);
+  // Optional: Graceful shutdown
+  // process.exit(1);
+});
+
 startServer();
 
 module.exports = app;

@@ -1,26 +1,33 @@
-FROM node:20-alpine
+# Use stable Node 20
+FROM node:20
 
 WORKDIR /app
 
-# Copy all files
-COPY . .
+# Copy package files first for caching
+COPY package.json ./
+COPY server/package.json ./server/
+COPY frontend/package.json ./frontend/
 
-# Install dependencies for both
-RUN npm install --prefix server
+# Install dependencies
+RUN npm install --prefix server --production
 RUN npm install --prefix frontend
+
+# Copy source code
+COPY server ./server
+COPY frontend ./frontend
 
 # Build frontend
 RUN npm run build --prefix frontend
 
-# Use server directory as main
+# Set directory to server
 WORKDIR /app/server
 
-# Standard production environment
+# Explicit environment
 ENV NODE_ENV=production
 ENV PORT=8080
 
-# Expose the default port
+# Expose
 EXPOSE 8080
 
-# Start command
+# Run
 CMD ["node", "server.js"]
