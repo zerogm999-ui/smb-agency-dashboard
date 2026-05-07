@@ -22,6 +22,12 @@ const dbConfig = process.env.DATABASE_URL
 
 const db = pgp(dbConfig);
 
+// Log database configuration (masked)
+const maskedConfig = { ...dbConfig };
+if (maskedConfig.connectionString) maskedConfig.connectionString = maskedConfig.connectionString.replace(/:.*@/, ':****@');
+if (maskedConfig.password) maskedConfig.password = '****';
+console.log('📡 Database configured with:', JSON.stringify(maskedConfig, null, 2));
+
 // ---------------------
 // Schema Definition
 // ---------------------

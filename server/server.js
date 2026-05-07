@@ -123,18 +123,28 @@ app.use(errorHandler);
 // ---------------------
 async function startServer() {
   try {
-    // Initialize database (create tables if they don't exist)
-    await initializeDatabase();
-    console.log('✅ Database initialized successfully');
-
-    app.listen(PORT, '0.0.0.0', () => {
+    const server = app.listen(PORT, '0.0.0.0', async () => {
       console.log(`\n🚀 SMB Dashboard API running on port ${PORT}`);
       console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
       console.log(`🔗 Health check: /health`);
       console.log(`📚 API base URL: /api\n`);
+
+      try {
+        // Initialize database in the background after server starts
+        await initializeDatabase();
+        console.log('✅ Database initialized successfully');
+      } catch (dbError) {
+        console.error('⚠️ Database initialization failed (background):', dbError.message);
+        // We don't exit(1) here to allow health checks to pass while we debug
+      }
+    });
+
+    server.on('error', (err) => {
+      console.error('❌ Server startup error:', err.message);
+      process.exit(1);
     });
   } catch (error) {
-    console.error('❌ Failed to start server:', error.message);
+    console.error('❌ Failed to start server wrapper:', error.message);
     process.exit(1);
   }
 }
