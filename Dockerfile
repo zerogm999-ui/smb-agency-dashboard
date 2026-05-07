@@ -17,10 +17,10 @@ WORKDIR /app/server
 
 # Standard production environment
 ENV NODE_ENV=production
-ENV PORT=5001
+ENV PORT=8080
 
 # Expose the default port
-EXPOSE 5001
+EXPOSE 8080
 
 # Start command
 CMD ["node", "server.js"]
