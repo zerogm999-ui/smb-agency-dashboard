@@ -83,6 +83,25 @@ app.use('/api/reports', reportsRoutes);
 app.use('/api/crm', crmRoutes);
 
 // ---------------------
+// Static Assets & SPA Routing
+// ---------------------
+
+// Serve frontend build in production
+if (process.env.NODE_ENV === 'production') {
+  const frontendPath = path.join(__dirname, '../frontend/dist');
+  app.use(express.static(frontendPath));
+  
+  // All other routes should serve index.html for SPA support
+  app.get('*', (req, res, next) => {
+    // If it starts with /api or /health, don't serve index.html (let it 404)
+    if (req.url.startsWith('/api') || req.url.startsWith('/health')) {
+      return next();
+    }
+    res.sendFile(path.join(frontendPath, 'index.html'));
+  });
+}
+
+// ---------------------
 // 404 Handler
 // ---------------------
 app.use((req, res) => {
